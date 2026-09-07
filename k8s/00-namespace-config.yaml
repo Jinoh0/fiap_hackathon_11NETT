@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: conexao-solidaria
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: conexao-solidaria
+data:
+  Jwt__Issuer: conexao-solidaria
+  Jwt__Audience: conexao-solidaria-clients
+  Jwt__ExpiresMinutes: "180"
+  RabbitMQ__Host: rabbitmq
+  RabbitMQ__Port: "5672"
+  RabbitMQ__Username: guest
+  Metrics__Port: "8081"
+  ASPNETCORE_URLS: http://+:8080
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+  namespace: conexao-solidaria
+type: Opaque
+stringData:
+  ConnectionStrings__Default: Host=postgres;Port=5432;Database=conexao_campanhas;Username=conexao;Password=conexao123
+  RabbitMQ__Password: guest
+  Jwt__Key: ConexaoSolidaria_SuperSecret_Key_ChangeInProd_32+
+  POSTGRES_USER: conexao
+  POSTGRES_PASSWORD: conexao123
+  POSTGRES_DB: conexao_campanhas

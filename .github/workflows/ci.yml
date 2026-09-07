@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  build-test-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore ConexaoSolidaria.sln
+
+      - name: Build
+        run: dotnet build ConexaoSolidaria.sln -c Release --no-restore
+
+      - name: Test
+        run: dotnet test ConexaoSolidaria.sln -c Release --no-build --verbosity normal
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Campanhas.Api image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/Campanhas.Api/Dockerfile
+          push: false
+          tags: conexao-solidaria/campanhas-api:ci
+
+      - name: Build Doacoes.Worker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/Doacoes.Worker/Dockerfile
+          push: false
+          tags: conexao-solidaria/doacoes-worker:ci
