@@ -22,6 +22,12 @@ Veja o diagrama em [docs/arquitetura.md](docs/arquitetura.md) e a justificativa 
 docker compose up --build -d
 ```
 
+Se a rede bridge do Docker falhar no seu ambiente (raro), use:
+
+```bash
+docker compose -f docker-compose.host.yml up --build -d
+```
+
 Serviços:
 
 | URL | Uso |
