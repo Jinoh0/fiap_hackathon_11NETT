@@ -2,7 +2,6 @@
 
 ## Contexto
 
-O edital exige justificar a escolha dos bancos de dados utilizados na arquitetura.
 Para o MVP, adotamos **dois componentes de persistência complementares**:
 
 1. **PostgreSQL 16** — fonte da verdade transacional (usuários, campanhas, doações).

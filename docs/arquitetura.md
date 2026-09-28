@@ -1,7 +1,5 @@
 # Diagrama de Arquitetura — Conexão Solidária
 
-## Visão geral (o que o edital pede)
-
 Microsserviços, banco, broker e observabilidade no mesmo desenho:
 
 ```mermaid

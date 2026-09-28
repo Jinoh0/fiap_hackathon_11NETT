@@ -17,7 +17,6 @@
   <h1>Justificativa dos bancos / persistência — Conexão Solidária</h1>
 
   <h2>Contexto</h2>
-  <p>O edital exige justificar a escolha dos bancos de dados utilizados na arquitetura. Para o MVP, adotamos <strong>dois componentes de persistência complementares</strong>:</p>
   <ol>
     <li><strong>PostgreSQL 16</strong> — fonte da verdade transacional (usuários, campanhas, doações).</li>
     <li><strong>RabbitMQ 3.13</strong> — persistência durável de eventos assíncronos (<code>DoacaoRecebidaEvent</code>).</li>
