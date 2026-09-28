@@ -165,7 +165,3 @@ docs/                      # Arquitetura e justificativa de bancos
 | POST | `/api/doacoes` | Doador |
 | GET | `/health` | Público |
 | GET | `/metrics` | Público |
-
-## Relatório de entrega
-
-Modelo individual: [docs/relatorio-entrega.md](docs/relatorio-entrega.md) (preencha nome, Discord, links do repo e do vídeo).
