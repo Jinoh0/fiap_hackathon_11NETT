@@ -1,7 +1,9 @@
 using System.Text;
 using Campanhas.Api.Auth;
+using Campanhas.Api.BackgroundJobs;
 using Campanhas.Api.Data;
 using Campanhas.Api.Messaging;
+using Campanhas.Api.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -51,6 +53,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddSingleton<JwtTokenService>();
 builder.Services.AddSingleton<IDoacaoEventPublisher, RabbitMqDoacaoEventPublisher>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<CampanhaService>();
+builder.Services.AddScoped<DoacaoService>();
+builder.Services.AddHostedService<CloseExpiredCampaignsJob>();
 
 var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key não configurada.");
 builder.Services

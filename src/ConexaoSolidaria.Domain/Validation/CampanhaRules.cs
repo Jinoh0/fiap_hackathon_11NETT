@@ -24,4 +24,35 @@ public static class CampanhaRules
             throw new InvalidOperationException("A doação não pode ser feita para campanhas encerradas ou canceladas.");
         }
     }
+
+    public static void EnsureCanUpdate(decimal metaFinanceira)
+    {
+        if (metaFinanceira <= 0)
+        {
+            throw new InvalidOperationException("A meta financeira deve ser maior que zero.");
+        }
+    }
+
+    public static void EnsureCanLeaveActive(CampanhaStatus status)
+    {
+        if (status != CampanhaStatus.Ativa)
+        {
+            throw new InvalidOperationException("Só é possível cancelar ou concluir uma campanha que esteja ativa.");
+        }
+    }
+
+    public static void EnsureCanChangeStatus(CampanhaStatus atual, CampanhaStatus novo)
+    {
+        if (atual == novo)
+        {
+            return;
+        }
+
+        EnsureCanLeaveActive(atual);
+
+        if (novo is not (CampanhaStatus.Concluida or CampanhaStatus.Cancelada))
+        {
+            throw new InvalidOperationException("A partir de Ativa, o status só pode ir para Concluida ou Cancelada.");
+        }
+    }
 }

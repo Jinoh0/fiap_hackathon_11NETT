@@ -8,3 +8,10 @@
 *.DotSettings.user
 TestResults/
 agent-tools/
+
+# Edital local da disciplina — não faz parte da entrega
+HACKATHON*.pdf
+
+# Notas pessoais (ensaio e teleprompter) — não vão para o repositório
+docs/tour-completo.md
+docs/roteiro-video.md

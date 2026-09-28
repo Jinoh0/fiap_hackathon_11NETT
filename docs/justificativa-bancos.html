@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Justificativa dos bancos — Conexão Solidária</title>
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; max-width: 720px; margin: 40px auto; line-height: 1.5; color: #111; }
+    h1 { font-size: 1.6rem; }
+    h2 { font-size: 1.2rem; margin-top: 1.6em; }
+    table { border-collapse: collapse; width: 100%; margin-top: 0.8em; }
+    th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+    th { background: #f3f3f3; }
+    code { font-family: Consolas, monospace; }
+  </style>
+</head>
+<body>
+  <h1>Justificativa dos bancos / persistência — Conexão Solidária</h1>
+
+  <h2>Contexto</h2>
+  <p>O edital exige justificar a escolha dos bancos de dados utilizados na arquitetura. Para o MVP, adotamos <strong>dois componentes de persistência complementares</strong>:</p>
+  <ol>
+    <li><strong>PostgreSQL 16</strong> — fonte da verdade transacional (usuários, campanhas, doações).</li>
+    <li><strong>RabbitMQ 3.13</strong> — persistência durável de eventos assíncronos (<code>DoacaoRecebidaEvent</code>).</li>
+  </ol>
+
+  <h2>Por que PostgreSQL</h2>
+  <ul>
+    <li>Modelo relacional adequado a regras de negócio (email único, FK campanha/doação, meta financeira decimal).</li>
+    <li>Constraints e ACID garantem consistência no cadastro de doadores e no incremento de <code>ValorArrecadado</code>.</li>
+    <li>Excelente suporte no ecossistema .NET via EF Core + Npgsql.</li>
+    <li>Imagem leve (<code>postgres:16-alpine</code>) e madura em Kubernetes.</li>
+    <li>Alternativa considerada: SQL Server — mais pesada no cluster local e menos conveniente para demo acadêmica.</li>
+  </ul>
+  <p>API e Worker compartilham o database <code>conexao_campanhas</code> de propósito: o Worker precisa atualizar o total arrecadado da campanha (requisito do fluxo assíncrono). A separação de responsabilidade fica nos <strong>microsserviços</strong> (API publica evento; Worker consome e escreve), não em um segundo SGBD artificial.</p>
+
+  <h2>Por que RabbitMQ (além do banco relacional)</h2>
+  <p>O brief obriga comunicação assíncrona: a API <strong>não</strong> atualiza o valor arrecadado diretamente. O broker:</p>
+  <ul>
+    <li>Desacopla API e Worker.</li>
+    <li>Oferece fila durável, ack/nack e Management UI (ideal para o vídeo de demonstração).</li>
+    <li>É mais simples e econômico que Kafka para o volume do MVP.</li>
+  </ul>
+
+  <h2>Resumo</h2>
+  <table>
+    <thead>
+      <tr><th>Persistência</th><th>Papel</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PostgreSQL</td><td>Dados de negócio (CRUD + agregação de arrecadação)</td></tr>
+      <tr><td>RabbitMQ</td><td>Transporte e retenção de eventos de doação até o Worker processar</td></tr>
+    </tbody>
+  </table>
+  <p>Essa combinação atende escalabilidade, observabilidade e o requisito explícito de mensageria do hackathon.</p>
+</body>
+</html>

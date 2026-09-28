@@ -43,4 +43,49 @@ public class CampanhaRulesTests
     {
         CampanhaRules.EnsureCanReceiveDonation(CampanhaStatus.Ativa);
     }
+
+    [Fact]
+    public void EnsureCanUpdate_RejectsZeroMeta()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => CampanhaRules.EnsureCanUpdate(0m));
+        Assert.Contains("maior que zero", ex.Message);
+    }
+
+    [Fact]
+    public void EnsureCanLeaveActive_AllowsActive()
+    {
+        CampanhaRules.EnsureCanLeaveActive(CampanhaStatus.Ativa);
+    }
+
+    [Theory]
+    [InlineData(CampanhaStatus.Concluida)]
+    [InlineData(CampanhaStatus.Cancelada)]
+    public void EnsureCanLeaveActive_RejectsClosedCampaigns(CampanhaStatus status)
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() => CampanhaRules.EnsureCanLeaveActive(status));
+        Assert.Contains("esteja ativa", ex.Message);
+    }
+
+    [Fact]
+    public void EnsureCanChangeStatus_AllowsSameStatus()
+    {
+        CampanhaRules.EnsureCanChangeStatus(CampanhaStatus.Ativa, CampanhaStatus.Ativa);
+        CampanhaRules.EnsureCanChangeStatus(CampanhaStatus.Concluida, CampanhaStatus.Concluida);
+    }
+
+    [Theory]
+    [InlineData(CampanhaStatus.Concluida)]
+    [InlineData(CampanhaStatus.Cancelada)]
+    public void EnsureCanChangeStatus_AllowsLeavingActive(CampanhaStatus destino)
+    {
+        CampanhaRules.EnsureCanChangeStatus(CampanhaStatus.Ativa, destino);
+    }
+
+    [Fact]
+    public void EnsureCanChangeStatus_RejectsReopening()
+    {
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            CampanhaRules.EnsureCanChangeStatus(CampanhaStatus.Cancelada, CampanhaStatus.Ativa));
+        Assert.Contains("esteja ativa", ex.Message);
+    }
 }

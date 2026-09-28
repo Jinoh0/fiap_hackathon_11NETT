@@ -8,7 +8,7 @@ Arquitetura: **microsserviços .NET 8**, **PostgreSQL**, **RabbitMQ**, **Kuberne
 
 A API autentica usuários, gerencia campanhas e **publica** doações; o Worker **consome** a fila e atualiza o valor arrecadado — a API nunca incrementa o total diretamente.
 
-Veja o diagrama em [docs/arquitetura.md](docs/arquitetura.md) e a justificativa dos bancos em [docs/justificativa-bancos.md](docs/justificativa-bancos.md).
+Veja o diagrama em [docs/arquitetura.md](docs/arquitetura.md) e a justificativa dos bancos em [docs/justificativa-bancos.pdf](docs/justificativa-bancos.pdf).
 
 ## Pré-requisitos
 
@@ -21,6 +21,8 @@ Veja o diagrama em [docs/arquitetura.md](docs/arquitetura.md) e a justificativa 
 ```bash
 docker compose up --build -d
 ```
+
+A API aplica as migrations e cria o gestor (`gestor@esperanca.org` / `Gestor@123`) ao ligar. Se o volume do Postgres nasceu numa versão antiga (sem migrations), apague-o uma vez com `docker compose down -v` e suba de novo.
 
 Se a rede bridge do Docker falhar no seu ambiente (raro), use:
 
@@ -157,17 +159,13 @@ docs/                      # Arquitetura e justificativa de bancos
 | POST | `/api/auth/register` | Público (Doador) |
 | POST | `/api/auth/login` | Público |
 | POST/PUT/GET | `/api/campanhas` | GestorONG |
+| POST | `/api/campanhas/{id}/cancelar` | GestorONG |
+| POST | `/api/campanhas/{id}/concluir` | GestorONG |
 | GET | `/api/campanhas/publicas` | Público |
 | POST | `/api/doacoes` | Doador |
 | GET | `/health` | Público |
 | GET | `/metrics` | Público |
 
-## Relatório de entrega (modelo)
+## Relatório de entrega
 
-Preencha e envie na data da entrega:
-
-- Nome do grupo:
-- Participantes e usernames no Discord:
-- Link da documentação: `docs/`
-- Link do(s) repositório(s):
-- Link do vídeo:
+Modelo individual: [docs/relatorio-entrega.md](docs/relatorio-entrega.md) (preencha nome, Discord, links do repo e do vídeo).
